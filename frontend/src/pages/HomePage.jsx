@@ -23,7 +23,7 @@ const HeroSlider = ({ images }) => {
     return (
       <div className="relative h-[70vh] bg-cover bg-center text-white flex items-center justify-center" style={{ backgroundImage: "url('https://r2.flowith.net/files/o/1750308709889-swarovski_crystal_gel_nail_design_index_6@1536x1024.png')" }}>
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-        <p className='z-10'>Loading slider...</p>
+        <p className='z-10'>Đang tải...</p>
       </div>
     )
   }

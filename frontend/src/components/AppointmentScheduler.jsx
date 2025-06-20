@@ -35,17 +35,31 @@ const AppointmentScheduler = () => {
     }
 
     return (
-        <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg text-sm md:text-base">
+        <div className="bg-white p-2 md:p-6 rounded-lg shadow-lg text-xs md:text-base overflow-hidden">
             <FullCalendar
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                initialView="timeGridWeek"
+                initialView="timeGridDay"
                 headerToolbar={{
-                    left: 'prev,next today',
+                    left: 'prev,next',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek'
+                    right: 'timeGridDay,timeGridWeek,dayGridMonth'
+                }}
+                views={{
+                    timeGridDay: {
+                        titleFormat: { year: 'numeric', month: 'short', day: 'numeric' }
+                    },
+                    timeGridWeek: {
+                        titleFormat: { year: 'numeric', month: 'short' }
+                    },
+                    dayGridMonth: {
+                        titleFormat: { year: 'numeric', month: 'long' }
+                    }
                 }}
                 events={events}
-                height="70vh"
+                height="auto"
+                contentHeight="auto"
+                aspectRatio={1.5}
+                expandRows={true}
                 locale="vi"
                 buttonText={{
                     today: 'Hôm nay',
@@ -57,6 +71,10 @@ const AppointmentScheduler = () => {
                 slotMinTime="08:00:00"
                 slotMaxTime="20:00:00"
                 allDaySlot={false}
+                stickyHeaderDates={true}
+                handleWindowResize={true}
+                dayMaxEvents={true}
+                nowIndicator={true}
             />
         </div>
     );

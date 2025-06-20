@@ -12,8 +12,10 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import apiClient from '../api/axiosConfig';
 import { getVisitorStats } from "../api/visitors";
+import { Menu } from 'lucide-react';
 
 const AdminDashboard = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
 
   const getTitle = () => {
@@ -35,8 +37,31 @@ const AdminDashboard = () => {
     }`;
 
   return (
-    <div className="flex min-h-[calc(100vh-130px)] bg-gray-50">
-      <aside className="w-64 bg-white border-r border-gray-200 p-4 flex-shrink-0">
+    <div className="flex min-h-[calc(100vh-130px)] bg-gray-50 relative overflow-hidden">
+      {/* Mobile Sidebar Toggle */}
+      <button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="md:hidden fixed top-16 left-4 z-[15] p-2 rounded-md bg-white shadow-lg hover:bg-gray-100 transition-colors"
+        aria-label="Toggle Menu"
+      >
+        <Menu size={24} />
+      </button>
+
+      {/* Sidebar */}
+      <aside className={`
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        md:translate-x-0
+        fixed md:static
+        top-0 left-0
+        h-[100dvh] md:h-full
+        w-72 md:w-64
+        bg-white border-r border-gray-200
+        p-4
+        transition-transform duration-300 ease-in-out
+        z-[10]
+        overflow-y-auto
+        shadow-lg md:shadow-none
+      `}>
         <nav className="space-y-2">
           <NavLink to="/admin" end className={navLinkClass}><LayoutDashboard size={20} className="mr-3" /> Bảng Điều Khiển</NavLink>
           <NavLink to="/admin/services" className={navLinkClass}><Scissors size={20} className="mr-3" /> Dịch Vụ</NavLink>
@@ -49,21 +74,31 @@ const AdminDashboard = () => {
         </nav>
       </aside>
 
-      <main className="flex-1 p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">{getTitle()}</h1>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <Routes>
-            <Route index element={<DashboardHome />} />
-            <Route path="services" element={<ManageServices />} />
-            <Route path="appointments" element={<ManageAppointments />} />
-            <Route path="gallery" element={<ManageGallery />} />
-            <Route path="slider" element={<ManageSlider />} />
-            <Route path="reviews" element={<ManageReviews />} />
-            <Route path="contacts" element={<ManageContacts />} />
-            <Route path="messages" element={<MessageManagement />} />
-          </Routes>
+      {/* Main Content */}
+      <div className="flex-1 p-4 md:p-6 overflow-x-auto pt-16 md:pt-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">{getTitle()}</h1>
         </div>
-      </main>
+
+        <Routes>
+          <Route index element={<DashboardHome />} />
+          <Route path="services" element={<ManageServices />} />
+          <Route path="appointments" element={<ManageAppointments />} />
+          <Route path="gallery" element={<ManageGallery />} />
+          <Route path="slider" element={<ManageSlider />} />
+          <Route path="reviews" element={<ManageReviews />} />
+          <Route path="contacts" element={<ManageContacts />} />
+          <Route path="messages" element={<MessageManagement />} />
+        </Routes>
+      </div>
+
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 md:hidden z-[5]"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 };

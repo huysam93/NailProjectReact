@@ -2,3 +2,5 @@
 npm start
 //front end
 npm run dev
+
+trong axiosConfig.js mở baseURL 
