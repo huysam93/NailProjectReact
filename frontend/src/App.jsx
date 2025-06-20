@@ -11,8 +11,17 @@ import AdminDashboard from './pages/AdminDashboard';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import Chatbox from './components/Chatbox';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { recordVisit } from './api/visitors';
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+      recordVisit(location.pathname); 
+  }, [location]);
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -25,7 +34,7 @@ function App() {
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/booking" element={<BookingPage />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} /> 
           <Route 
             path="/admin/*" 
             element={
@@ -37,6 +46,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      <Chatbox />
     </div>
   );
 }

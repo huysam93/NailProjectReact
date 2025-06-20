@@ -1,74 +1,290 @@
 import { NavLink, Routes, Route, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Scissors, ImageIcon, MessageSquare, Calendar, Mail, SlidersHorizontal } from 'lucide-react';
+import { LayoutDashboard, Scissors, ImageIcon, MessageSquare, Calendar, Mail, SlidersHorizontal, MessageCircle } from 'lucide-react';
 import ManageServices from './admin/ManageServices';
 import ManageAppointments from './admin/ManageAppointments';
 import ManageGallery from './admin/ManageGallery';
 import ManageSlider from './admin/ManageSlider';
 import ManageReviews from './admin/ManageReviews';
 import ManageContacts from './admin/ManageContacts';
-
+import MessageManagement from './admin/MessageManagement';
+import { useState, useEffect } from 'react';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement } from 'chart.js';
+import { Bar, Pie, Line } from 'react-chartjs-2';
+import apiClient from '../api/axiosConfig';
+import { getVisitorStats } from "../api/visitors";
 
 const AdminDashboard = () => {
-    const location = useLocation();
-    
-    const getTitle = () => {
-        const path = location.pathname.replace('/admin', '');
-        if (path.startsWith('/services')) return 'Quản Lý Dịch Vụ';
-        if (path.startsWith('/appointments')) return 'Quản Lý Lịch Hẹn';
-        if (path.startsWith('/gallery')) return 'Quản Lý Bộ Sưu Tập';
-        if (path.startsWith('/slider')) return 'Quản Lý Slider';
-        if (path.startsWith('/reviews')) return 'Quản Lý Đánh Giá';
-        if (path.startsWith('/contacts')) return 'Quản Lý Tin Nhắn';
-        return 'Bảng Điều Khiển';
-    };
-    
-    const navLinkClass = ({ isActive }) =>
-    `flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${
-      isActive
-        ? 'bg-brand-pink text-brand-pink-dark'
-        : 'text-gray-600 hover:bg-brand-pink-light hover:text-brand-pink-dark'
+  const location = useLocation();
+
+  const getTitle = () => {
+    const path = location.pathname.replace('/admin', '');
+    if (path.startsWith('/services')) return 'Quản Lý Dịch Vụ';
+    if (path.startsWith('/appointments')) return 'Quản Lý Lịch Hẹn';
+    if (path.startsWith('/gallery')) return 'Quản Lý Bộ Sưu Tập';
+    if (path.startsWith('/slider')) return 'Quản Lý Slider';
+    if (path.startsWith('/reviews')) return 'Quản Lý Đánh Giá';
+    if (path.startsWith('/contacts')) return 'Quản Lý Liên Hệ';
+    if (path.startsWith('/messages')) return 'Quản Lý Tin Nhắn Chatbox';
+    return 'Bảng Điều Khiển';
+  };
+
+  const navLinkClass = ({ isActive }) =>
+    `flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${isActive
+      ? 'bg-brand-pink text-brand-pink-dark'
+      : 'text-gray-600 hover:bg-brand-pink-light hover:text-brand-pink-dark'
     }`;
 
   return (
     <div className="flex min-h-[calc(100vh-130px)] bg-gray-50">
       <aside className="w-64 bg-white border-r border-gray-200 p-4 flex-shrink-0">
         <nav className="space-y-2">
-            <NavLink to="/admin" end className={navLinkClass}><LayoutDashboard size={20} className="mr-3" /> Bảng Điều Khiển</NavLink>
-            <NavLink to="/admin/services" className={navLinkClass}><Scissors size={20} className="mr-3" /> Dịch Vụ</NavLink>
-            <NavLink to="/admin/appointments" className={navLinkClass}><Calendar size={20} className="mr-3" /> Lịch Hẹn</NavLink>
-            <NavLink to="/admin/gallery" className={navLinkClass}><ImageIcon size={20} className="mr-3" /> Bộ Sưu Tập</NavLink>
-            <NavLink to="/admin/slider" className={navLinkClass}><SlidersHorizontal size={20} className="mr-3" /> Slider</NavLink>
-            <NavLink to="/admin/reviews" className={navLinkClass}><MessageSquare size={20} className="mr-3" /> Đánh Giá</NavLink>
-            <NavLink to="/admin/contacts" className={navLinkClass}><Mail size={20} className="mr-3" /> Tin nhắn</NavLink>
+          <NavLink to="/admin" end className={navLinkClass}><LayoutDashboard size={20} className="mr-3" /> Bảng Điều Khiển</NavLink>
+          <NavLink to="/admin/services" className={navLinkClass}><Scissors size={20} className="mr-3" /> Dịch Vụ</NavLink>
+          <NavLink to="/admin/appointments" className={navLinkClass}><Calendar size={20} className="mr-3" /> Lịch Hẹn</NavLink>
+          <NavLink to="/admin/gallery" className={navLinkClass}><ImageIcon size={20} className="mr-3" /> Bộ Sưu Tập</NavLink>
+          <NavLink to="/admin/slider" className={navLinkClass}><SlidersHorizontal size={20} className="mr-3" /> Slider</NavLink>
+          <NavLink to="/admin/reviews" className={navLinkClass}><MessageSquare size={20} className="mr-3" /> Đánh Giá</NavLink>
+          <NavLink to="/admin/contacts" className={navLinkClass}><Mail size={20} className="mr-3" /> Liên hệ</NavLink>
+          <NavLink to="/admin/messages" className={navLinkClass}><MessageCircle size={20} className="mr-3" /> Tin nhắn Chatbox</NavLink>
         </nav>
       </aside>
 
       <main className="flex-1 p-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">{getTitle()}</h1>
         <div className="bg-white p-6 rounded-lg shadow-sm">
-            <Routes>
-                <Route index element={<DashboardHome />} />
-                <Route path="services" element={<ManageServices />} />
-                <Route path="appointments" element={<ManageAppointments />} />
-                <Route path="gallery" element={<ManageGallery />} />
-                <Route path="slider" element={<ManageSlider />} />
-                <Route path="reviews" element={<ManageReviews />} />
-                <Route path="contacts" element={<ManageContacts />} />
-            </Routes>
+          <Routes>
+            <Route index element={<DashboardHome />} />
+            <Route path="services" element={<ManageServices />} />
+            <Route path="appointments" element={<ManageAppointments />} />
+            <Route path="gallery" element={<ManageGallery />} />
+            <Route path="slider" element={<ManageSlider />} />
+            <Route path="reviews" element={<ManageReviews />} />
+            <Route path="contacts" element={<ManageContacts />} />
+            <Route path="messages" element={<MessageManagement />} />
+          </Routes>
         </div>
       </main>
     </div>
   );
 };
 
-const DashboardHome = () => (
-    <div>
-        <h2 className="text-xl font-semibold">Chào mừng đến với trang quản trị NanaNail!</h2>
-        <p className="mt-2 text-gray-600">
-            Sử dụng thanh điều hướng bên trái để quản lý các nội dung của website.
-        </p>
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, LineElement, PointElement);
+
+const DashboardHome = () => {
+  const [stats, setStats] = useState({
+    services: 0,
+    appointments: 0,
+    reviews: 0,
+    contacts: 0,
+    messages: 0,
+    visitors: 0
+  });
+  const [dateRange, setDateRange] = useState({
+    startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0]
+  });
+  const [appointmentsByMonth, setAppointmentsByMonth] = useState([]);
+  const [visitorStats, setVisitorStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const [servicesRes, appointmentsRes, reviewsRes, contactsRes, messagesRes, visitorsRes] = await Promise.all([
+        apiClient.get('/services'),
+        apiClient.get(`/appointments?start=${dateRange.startDate}&end=${dateRange.endDate}`),
+        apiClient.get('/reviews'),
+        apiClient.get('/contacts'),
+        apiClient.get('/messages'),
+        apiClient.get(`/visitors?start=${dateRange.startDate}&end=${dateRange.endDate}`)
+      ]);
+
+      setStats({
+        services: servicesRes.data.length,
+        appointments: appointmentsRes.data.length,
+        reviews: reviewsRes.data.length,
+        contacts: contactsRes.data.length,
+        messages: messagesRes.data.length,
+        visitors: visitorsRes.data.total || 0
+      });
+
+      // Xử lý dữ liệu lịch hẹn theo tháng
+      processAppointmentsData(appointmentsRes.data);
+      // Xử lý dữ liệu lượt truy cập
+      const stats = await getVisitorStats(
+        dateRange.startDate,
+        dateRange.endDate
+      );
+      setVisitorStats(stats);
+    } catch (error) {
+      console.error('Lỗi khi tải dữ liệu thống kê:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchData();
+  }, [dateRange]);
+
+  const processAppointmentsData = (appointments) => {
+    const monthlyData = new Array(12).fill(0);
+    appointments.forEach(apt => {
+      const month = new Date(apt.appointment_date).getMonth();
+      monthlyData[month]++;
+    });
+    setAppointmentsByMonth(monthlyData);
+  };
+
+  const handleDateChange = (e) => {
+    setDateRange(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const barChartData = {
+    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+    datasets: [{
+      label: 'Số lượng lịch hẹn',
+      data: appointmentsByMonth,
+      backgroundColor: 'rgba(219, 39, 119, 0.5)',
+      borderColor: 'rgb(219, 39, 119)',
+      borderWidth: 1
+    }]
+  };
+
+  const visitorChartData = {
+    labels: visitorStats.map(stat => stat.date),
+    datasets: [{
+      label: 'Lượt truy cập',
+      data: visitorStats.map(stat => stat.count),
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1,
+      fill: false
+    }]
+  };
+
+  const pieChartData = {
+    labels: ['Dịch vụ', 'Lịch hẹn', 'Đánh giá', 'Liên hệ', 'Tin nhắn'],
+    datasets: [{
+      data: [stats.services, stats.appointments, stats.reviews, stats.contacts, stats.messages],
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(54, 162, 235, 0.5)',
+        'rgba(255, 206, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(153, 102, 255, 0.5)'
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)'
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  const chartData = {
+    labels: visitorStats.map((stat) => stat.visit_date),
+    datasets: [
+      {
+        label: "Tổng lượt truy cập",
+        data: visitorStats.map((stat) => stat.visit_count),
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
+      },
+      {
+        label: "Khách truy cập duy nhất",
+        data: visitorStats.map((stat) => stat.unique_visitors),
+        borderColor: "rgb(255, 99, 132)",
+        tension: 0.1,
+      },
+    ],
+  };
+
+  if (loading) {
+    return <div>Đang tải dữ liệu...</div>;
+  }
+
+  return (
+    <div className="space-y-8">
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Chào mừng đến với trang quản trị NanaNail!</h2>
+        <div className="flex gap-4 mb-8">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Từ ngày:</label>
+            <input
+              type="date"
+              name="startDate"
+              value={dateRange.startDate}
+              onChange={handleDateChange}
+              className="border rounded px-2 py-1"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Đến ngày:</label>
+            <input
+              type="date"
+              name="endDate"
+              value={dateRange.endDate}
+              onChange={handleDateChange}
+              className="border rounded px-2 py-1"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="bg-pink-50 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-pink-600">Dịch vụ</h4>
+            <p className="text-2xl font-bold text-pink-700">{stats.services}</p>
+          </div>
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-blue-600">Lịch hẹn</h4>
+            <p className="text-2xl font-bold text-blue-700">{stats.appointments}</p>
+          </div>
+          <div className="bg-yellow-50 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-yellow-600">Đánh giá</h4>
+            <p className="text-2xl font-bold text-yellow-700">{stats.reviews}</p>
+          </div>
+          <div className="bg-green-50 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-green-600">Liên hệ</h4>
+            <p className="text-2xl font-bold text-green-700">{stats.contacts}</p>
+          </div>
+          <div className="bg-purple-50 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-purple-600">Tin nhắn</h4>
+            <p className="text-2xl font-bold text-purple-700">{stats.messages}</p>
+          </div>
+          <div className="bg-teal-50 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-teal-600">Lượt truy cập</h4>
+            <p className="text-2xl font-bold text-teal-700"> {visitorStats.reduce((sum, stat) => sum + stat.visit_count, 0)}</p>
+          </div>
+          <div className="bg-white-50 p-4 rounded-lg">
+            <h4 className="text-sm font-medium text-teal-600">Khách truy cập duy nhất</h4>
+            <p className="text-2xl font-bold text-teal-700">  {visitorStats.reduce((sum, stat) => sum + stat.unique_visitors, 0)}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-white p-4 rounded-lg shadow col-span-2">
+          <h3 className="text-lg font-semibold mb-4">Thống kê lịch hẹn theo tháng</h3>
+          <Bar data={barChartData} options={{ responsive: true }} />
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-4">Tổng quan dữ liệu</h3>
+          <Pie data={pieChartData} options={{ responsive: true }} />
+        </div>
+      </div>
+
+      <div className="bg-white p-4 rounded-lg shadow">
+        <Line data={chartData} />
+      </div>
     </div>
-);
+  );
+};
 
 
 export default AdminDashboard;

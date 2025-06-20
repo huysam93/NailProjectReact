@@ -28,7 +28,7 @@ const AboutPage = () => {
                         className="md:w-1/2"
                     >
                         <img 
-                            src="https://images.unsplash.com/photo-1604654894610-df644b4dec1f?q=80&w=1974&auto=format&fit=crop" 
+                            src="https://scontent.fsgn24-1.fna.fbcdn.net/v/t39.30808-6/486595788_2484655618563367_3153967403476806946_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFUxNNAdCDcWtsnQbB5z4ZEpJPWxsOKaqekk9bGw4pqp3oMqhvo1bSsEViNNYS6lN4__fsIE71vs7ex2lgNa5Yl&_nc_ohc=1Fg4P8GYJfMQ7kNvwHyfs5j&_nc_oc=AdmGJlXYMazKmA4sORWG_PWUeLEGjJWZBGelRBkQJobOLNRDcHBXT0Qa4yXdHqcIOY8&_nc_zt=23&_nc_ht=scontent.fsgn24-1.fna&_nc_gid=2DDyfbBECWxn8kFUk6B2ug&oh=00_AfMjjLoa94AhiJuJ36DgXtojvkNIirn8lQJ5EBBja0Z7Ww&oe=685AC1F8" 
                             alt="NanaNail Salon Interior"
                             className="rounded-lg shadow-xl"
                         />

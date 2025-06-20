@@ -66,6 +66,11 @@ function createAndSeedTables() {
             message TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
+        db.run(`CREATE TABLE messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            content TEXT NOT NULL,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
         db.run(`CREATE TABLE appointments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer_name TEXT NOT NULL,
@@ -80,6 +85,13 @@ function createAndSeedTables() {
             }
             seedData(passwordHash);
         });
+        db.run(`CREATE TABLE visitors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ip_address TEXT,
+            user_agent TEXT,
+            visit_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+            page_url TEXT
+        )`);
     });
 }
 

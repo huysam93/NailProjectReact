@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { initializeDB } = require('./database');
-
+const visitorsRoutes = require('./routes/visitors');
 
 const authRoutes = require('./routes/auth');
 const aboutRoutes = require('./routes/about');
@@ -11,6 +11,7 @@ const sliderRoutes = require('./routes/slider');
 const reviewRoutes = require('./routes/reviews');
 const contactRoutes = require('./routes/contacts');
 const appointmentRoutes = require('./routes/appointments');
+const messageRoutes = require('./routes/messages');
 
 
 const app = express();
@@ -32,6 +33,8 @@ app.use('/api', sliderRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', contactRoutes);
 app.use('/api', appointmentRoutes);
+app.use('/api', messageRoutes);
+app.use('/api', visitorsRoutes);
 
 const path = require('path');
 
