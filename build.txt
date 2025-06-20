@@ -4,3 +4,5 @@ npm start
 npm run dev
 
 trong axiosConfig.js mở baseURL 
+
+npm run build trong frontend, sau đó copy dist từ frontend sang backend
