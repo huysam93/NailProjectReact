@@ -85,13 +85,13 @@ function createAndSeedTables() {
             }
             seedData(passwordHash);
         });
-        db.run(`CREATE TABLE visitors (
+        db.run(`CREATE TABLE IF NOT EXISTS visitors (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             ip_address TEXT,
             user_agent TEXT,
-            visit_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-            page_url TEXT
-        )`);
+            page_url TEXT,
+            visit_time DATETIME DEFAULT CURRENT_TIMESTAMP
+            )`);
     });
 }
 
