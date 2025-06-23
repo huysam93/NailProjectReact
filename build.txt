@@ -12,3 +12,11 @@ git pull
 git add .
 git commit -m "note"
 git push
+
+--------------------
+goi api : https://nananail-u35x.onrender.com/api/dev/downloadl-db
+để download file database hiện tại về,
+ sau đó upload lên google drive
+ DB_BACKUP_URL=https://drive.google.com/uc?export=download&id=1IhC9I5QiI-6jpGsQpVrJU9-RlP1JePfN
+ thay id ....
+ sau đó build và deploy
