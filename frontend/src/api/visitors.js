@@ -6,7 +6,7 @@ export const recordVisit = async (pageUrl) => {
         user_agent: navigator.userAgent,
         page_url: pageUrl
       };
-      return await apiClient.post('/api/visitors', data);
+      return await apiClient.post('/visitors', data);
     } catch (error) {
       console.error('Error recording visit:', error);
     }
