@@ -1,6 +1,8 @@
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
+const path = require('path');
+const https = require('https');
 
 const DB_FILE = './nananail.db';
 
