@@ -12,6 +12,7 @@ const reviewRoutes = require('./routes/reviews');
 const contactRoutes = require('./routes/contacts');
 const appointmentRoutes = require('./routes/appointments');
 const messageRoutes = require('./routes/messages');
+const devRoutes = require('./routes/dev');
 
 
 const app = express();
@@ -35,6 +36,7 @@ app.use('/api', contactRoutes);
 app.use('/api', appointmentRoutes);
 app.use('/api', messageRoutes);
 app.use('/api', visitorsRoutes);
+app.use('/api/dev', devRoutes);
 
 const path = require('path');
 
