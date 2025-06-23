@@ -2,14 +2,14 @@ import apiClient from './axiosConfig';
 
 export const recordVisit = async (pageUrl) => {
     try {
-        const data = {
-            ip_address: await fetch('https://api.ipify.org?format=json')
-                .then(res => res.json())
-                .then(data => data.ip),
-            user_agent: navigator.userAgent,
-            page_url: pageUrl
-        };
-        return await apiClient.post('/visitors', data);
+        // const data = {
+        //     ip_address: await fetch('https://api.ipify.org?format=json')
+        //         .then(res => res.json())
+        //         .then(data => data.ip),
+        //     user_agent: navigator.userAgent,
+        //     page_url: pageUrl
+        // };
+        // return await apiClient.post('/visitors', data);
     } catch (error) {
         console.error('Error recording visit:', error);
     }
