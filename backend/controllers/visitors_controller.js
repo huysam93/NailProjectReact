@@ -2,14 +2,20 @@ const { getDB } = require('../database');
 
 exports.recordVisit = (req, res) => {
     const db = getDB();
-    const { ip_address, user_agent, page_url } = req.body;
-
-    const sql = 'INSERT INTO visitors (ip_address, user_agent, page_url) VALUES (?, ?, ?)';
-    db.run(sql, [ip_address, user_agent, page_url], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(201).json({ id: this.lastID });
+  
+    const ip_address =
+      req.headers['x-forwarded-for']?.split(',')[0] || req.socket.remoteAddress;
+  
+    const { user_agent, page_url } = req.body;
+  
+    const sql =
+      'INSERT INTO visitors (ip_address, user_agent, page_url, visit_time) VALUES (?, ?, ?, datetime("now"))';
+  
+    db.run(sql, [ip_address, user_agent, page_url], function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.status(201).json({ id: this.lastID });
     });
-};
+  };
 
 exports.getVisitorStats = (req, res) => {
     const db = getDB();
