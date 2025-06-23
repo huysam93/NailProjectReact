@@ -6,19 +6,61 @@ const DB_FILE = './nananail.db';
 
 let db;
 
+// ✅ Hàm tải file .db từ Google Drive
+function downloadDatabaseBackup(url, destination, callback) {
+    const file = fs.createWriteStream(destination);
+    https.get(url, (response) => {
+        if (response.statusCode !== 200) {
+            return callback(new Error(`Failed to download: ${response.statusCode}`));
+        }
+
+        response.pipe(file);
+        file.on('finish', () => {
+            file.close(callback);
+        });
+    }).on('error', (err) => {
+        fs.unlink(destination, () => { }); // Xóa nếu lỗi
+        callback(err);
+    });
+}
+
+// ✅ Hàm khởi tạo database
 function initializeDB() {
     const dbExists = fs.existsSync(DB_FILE);
-    db = new sqlite3.Database(DB_FILE, (err) => {
-        if (err) {
-            console.error('Error connecting to database:', err.message);
-            return;
-        }
-        console.log('Connected to the NanaNail SQLite database.');
-    });
+
+    const startApp = () => {
+        db = new sqlite3.Database(DB_FILE, (err) => {
+            if (err) {
+                console.error('❌ Error connecting to database:', err.message);
+                return;
+            }
+            console.log('✅ Connected to the NanaNail SQLite database.');
+
+            if (!dbExists) {
+                console.log('🧱 Creating and seeding tables...');
+                createAndSeedTables(); // Chỉ gọi nếu file không tồn tại ban đầu
+            }
+        });
+    };
 
     if (!dbExists) {
-        console.log('Database file not found. Creating and seeding tables...');
-        createAndSeedTables();
+        console.log('📂 Database file not found. Downloading backup...');
+
+        // ✅ Link tải trực tiếp từ Google Drive (dựa trên file bạn gửi)
+        const backupURL = 'https://drive.google.com/uc?export=download&id=1IhC9I5QiI-6jpGsQpVrJU9-RlP1JePfN';
+
+        downloadDatabaseBackup(backupURL, DB_FILE, (err) => {
+            if (err) {
+                console.error('❌ Failed to download backup:', err.message);
+                console.log('🚧 Proceeding to create new DB instead.');
+                startApp(); // Không có backup, tạo mới và seed
+            } else {
+                console.log('✅ Database backup downloaded successfully.');
+                startApp(); // Tải thành công, dùng file đó
+            }
+        });
+    } else {
+        startApp(); // DB đã tồn tại → mở luôn
     }
 }
 
@@ -123,7 +165,7 @@ function seedData(passwordHash) {
     const stmtReviews = db.prepare("INSERT INTO reviews (customer_name, content, rating) VALUES (?, ?, ?)");
     reviews.forEach(r => stmtReviews.run(r.name, r.content, r.rating));
     stmtReviews.finalize();
-    
+
     console.log('Database seeded successfully.');
 }
 
