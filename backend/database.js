@@ -73,49 +73,49 @@ function createAndSeedTables() {
     const passwordHash = bcrypt.hashSync(adminPassword, saltRounds);
 
     db.serialize(() => {
-        db.run(`CREATE TABLE users (
+        db.run(`CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL
     )`);
-        db.run(`CREATE TABLE about (
+        db.run(`CREATE TABLE IF NOT EXISTS about (
       id INTEGER PRIMARY KEY,
       content TEXT
     )`);
-        db.run(`CREATE TABLE services (
+        db.run(`CREATE TABLE IF NOT EXISTS services (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       description TEXT,
       price REAL NOT NULL
     )`);
-        db.run(`CREATE TABLE gallery_images (
+        db.run(`CREATE TABLE IF NOT EXISTS gallery_images (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       image_base64 TEXT NOT NULL,
       tag TEXT
     )`);
-        db.run(`CREATE TABLE slider_images (
+        db.run(`CREATE TABLE IF NOT EXISTS slider_images (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       image_base64 TEXT NOT NULL
     )`);
-        db.run(`CREATE TABLE reviews (
+        db.run(`CREATE TABLE IF NOT EXISTS reviews (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       customer_name TEXT NOT NULL,
       content TEXT,
       rating INTEGER CHECK(rating >= 1 AND rating <= 5)
     )`);
-        db.run(`CREATE TABLE contacts (
+        db.run(`CREATE TABLE IF NOT EXISTS contacts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       email TEXT NOT NULL,
       message TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
-        db.run(`CREATE TABLE messages (
+        db.run(`CREATE TABLE IF NOT EXISTS messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       content TEXT NOT NULL,
       createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
-        db.run(`CREATE TABLE appointments (
+        db.run(`CREATE TABLE IF NOT EXISTS appointments (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       customer_name TEXT NOT NULL,
       service_id INTEGER,
@@ -123,7 +123,7 @@ function createAndSeedTables() {
       status TEXT DEFAULT 'pending',
       FOREIGN KEY (service_id) REFERENCES services(id)
     )`);
-        db.run(`CREATE TABLE visitors (
+        db.run(`CREATE TABLE IF NOT EXISTS visitors (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       ip_address TEXT,
       user_agent TEXT,
@@ -138,11 +138,11 @@ function createAndSeedTables() {
 // Seed dữ liệu mẫu
 function seedData(passwordHash) {
     db.serialize(() => {
-        const stmtUsers = db.prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)");
+        const stmtUsers = db.prepare("INSERT OR IGNORE INTO users (username, password_hash) VALUES (?, ?)");
         stmtUsers.run('nananail', passwordHash);
         stmtUsers.finalize();
 
-        const stmtAbout = db.prepare("INSERT INTO about (id, content) VALUES (?, ?)");
+        const stmtAbout = db.prepare("INSERT OR IGNORE INTO about (id, content) VALUES (?, ?)");
         stmtAbout.run(1, 'Chào mừng đến với NanaNail! Chúng tôi tự hào mang đến cho bạn những dịch vụ chăm sóc móng chuyên nghiệp và chất lượng nhất tại Đà Lạt. Với đội ngũ kỹ thuật viên tay nghề cao và không gian thư giãn, sang trọng, NanaNail là điểm đến lý tưởng để bạn làm mới bản thân và tận hưởng những phút giây thư thái.');
         stmtAbout.finalize();
 
@@ -152,7 +152,7 @@ function seedData(passwordHash) {
             { name: 'Nail Art Design', description: 'Vẽ, đính đá, thiết kế nail theo yêu cầu.', price: 50000 },
             { name: 'Chăm sóc móng tay/chân', description: 'Cắt da, dũa móng, massage tay và chân.', price: 100000 }
         ];
-        const stmtServices = db.prepare("INSERT INTO services (name, description, price) VALUES (?, ?, ?)");
+        const stmtServices = db.prepare("INSERT OR IGNORE INTO services (name, description, price) VALUES (?, ?, ?)");
         services.forEach(s => stmtServices.run(s.name, s.description, s.price));
         stmtServices.finalize();
 
@@ -161,7 +161,7 @@ function seedData(passwordHash) {
             { name: 'Bạn Minh Thư', content: 'Mẫu nail xinh xỉu, lần sau sẽ ghé lại.', rating: 5 },
             { name: 'Anh Hùng', content: 'Không gian sạch sẽ, sang trọng. Bạn gái mình rất thích.', rating: 4 }
         ];
-        const stmtReviews = db.prepare("INSERT INTO reviews (customer_name, content, rating) VALUES (?, ?, ?)");
+        const stmtReviews = db.prepare("INSERT OR IGNORE INTO reviews (customer_name, content, rating) VALUES (?, ?, ?)");
         reviews.forEach(r => stmtReviews.run(r.name, r.content, r.rating));
         stmtReviews.finalize();
 
