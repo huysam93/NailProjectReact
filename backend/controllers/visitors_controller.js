@@ -1,6 +1,7 @@
 const { getDB } = require('../database');
 
 exports.recordVisit = (req, res) => {
+    console.log('✅ Recording visit');
     const db = getDB();
 
     const ip_address =
